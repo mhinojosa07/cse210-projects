@@ -1,17 +1,26 @@
-// Bonus: This implementation is structured for easy expansion to load multiple scriptures from file
-// or randomly select one at runtime. Classes use encapsulation and are for future features such as hint mode,
-// verse library support, or timed memorization challenges.
+// Scripture Memorizer Program
+// Creative feature: This version loads a library of scriptures from a file called "scriptures.txt"
+// and picks a random one to memorize. This helps users practice memorizing different verses each time!
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 class Program
 {
     static void Main(string[] args)
     {
-        // Example Scripture (stretch: you could load multiple from a file)
-        Reference reference = new Reference("Proverbs", 3, 5, 6);
-        string scriptureText = "Trust in the Lord with all thine heart and lean not unto thine own understanding";
-        Scripture scripture = new Scripture(reference, scriptureText);
+        // Load scriptures from a file
+        List<Scripture> scriptureLibrary = ScriptureLibrary.LoadFromFile("scriptures.txt");
+        if (scriptureLibrary.Count == 0)
+        {
+            Console.WriteLine("No scriptures found in the file. Exiting program.");
+            return;
+        }
+
+        // Pick one scripture at random
+        Random rand = new Random();
+        Scripture scripture = scriptureLibrary[rand.Next(scriptureLibrary.Count)];
 
         while (true)
         {

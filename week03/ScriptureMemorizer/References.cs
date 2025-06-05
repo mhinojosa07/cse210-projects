@@ -1,33 +1,52 @@
 public class Reference
 {
-    private string _book;
-    private int _chapter;
-    private int _verseStart;
-    private int _verseEnd;
+    public string Book { get; }
+    public int Chapter { get; }
+    public int StartVerse { get; }
+    public int? EndVerse { get; }
 
-    // Single verse constructor
+    // Single verse
     public Reference(string book, int chapter, int verse)
     {
-        _book = book;
-        _chapter = chapter;
-        _verseStart = verse;
-        _verseEnd = verse;
+        Book = book;
+        Chapter = chapter;
+        StartVerse = verse;
+        EndVerse = null;
     }
 
-    // Verse range constructor
-    public Reference(string book, int chapter, int verseStart, int verseEnd)
+    // Verse range
+    public Reference(string book, int chapter, int startVerse, int endVerse)
     {
-        _book = book;
-        _chapter = chapter;
-        _verseStart = verseStart;
-        _verseEnd = verseEnd;
+        Book = book;
+        Chapter = chapter;
+        StartVerse = startVerse;
+        EndVerse = endVerse;
     }
 
-    public string GetDisplayText()
+    public override string ToString()
     {
-        return _verseStart == _verseEnd
-            ? $"{_book} {_chapter}:{_verseStart}"
-            : $"{_book} {_chapter}:{_verseStart}-{_verseEnd}";
+        if (EndVerse.HasValue)
+            return $"{Book} {Chapter}:{StartVerse}-{EndVerse}";
+        else
+            return $"{Book} {Chapter}:{StartVerse}";
+    }
+
+    // For file loading: expects "Book|Chapter|StartVerse|EndVerse(optional)"
+    public static Reference Parse(string line)
+    {
+        // Format: Book|Chapter|StartVerse|EndVerse
+        string[] parts = line.Split('|');
+        string book = parts[0];
+        int chapter = int.Parse(parts[1]);
+        int startVerse = int.Parse(parts[2]);
+        if (parts.Length == 4 && !string.IsNullOrEmpty(parts[3]))
+        {
+            int endVerse = int.Parse(parts[3]);
+            return new Reference(book, chapter, startVerse, endVerse);
+        }
+        else
+        {
+            return new Reference(book, chapter, startVerse);
+        }
     }
 }
-
